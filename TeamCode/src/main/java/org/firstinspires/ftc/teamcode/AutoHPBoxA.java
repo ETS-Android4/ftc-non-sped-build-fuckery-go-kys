@@ -43,7 +43,7 @@ public class AutoHPBoxA extends LinearOpMode
         TopRight.setPower(20);
         BottomRight.setPower(20);
         BottomLeft.setPower(20);
-        sleep(420); // go forward
+        sleep(600); // go forward
 
         TopLeft.setPower(0);
         TopRight.setPower(0);
