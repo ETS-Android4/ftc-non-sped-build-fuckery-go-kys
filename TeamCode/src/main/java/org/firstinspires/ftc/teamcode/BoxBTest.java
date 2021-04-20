@@ -423,6 +423,14 @@ public class BoxBTest extends LinearOpMode {
         sleep(time);
     }
 
+    public void stop(int time){
+        TopRight.setPower(0);
+        TopLeft.setPower(0);
+        BottomLeft.setPower(0);
+        BottomRight.setPower(0);
+        sleep(time);
+    }
+
     public void turn(int degrees){
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         while(angles.firstAngle != degrees) {
