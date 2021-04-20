@@ -1,8 +1,9 @@
 ## INSTRUCTIONS TO ADD TO ANDROID STUDIO
 
+- Download Android Studio  
 - Click on the green code button at the top right 
 - Copy the link
-- Go to android studio's file page and click "Get from Version Control"
+- Go to Android Studio's startup page and click "Get from Version Control"
 - Paste the link and once it loads, you're connected! 
 
 ## NOTICE
