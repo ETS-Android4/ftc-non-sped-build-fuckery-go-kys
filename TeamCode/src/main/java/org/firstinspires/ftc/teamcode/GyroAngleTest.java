@@ -80,12 +80,11 @@ public class GyroAngleTest extends OpMode
         robot.TopRight.setPower((rx - ry - y + x) * speedMultiplier);
         robot.BottomRight.setPower((rx + ry - y) * speedMultiplier);
 
+        globalAngle = getAngle();
 
-
-
-            telemetry.addData("1 imu heading", lastAngles.firstAngle);
-            telemetry.addData("2 global heading", globalAngle);
-            telemetry.update();
+        telemetry.addData("1 imu heading", lastAngles.firstAngle);
+        telemetry.addData("2 global heading", globalAngle);
+        telemetry.update();
 
 
     }
