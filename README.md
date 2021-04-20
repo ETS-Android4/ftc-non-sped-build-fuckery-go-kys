@@ -1,3 +1,10 @@
+## INSTRUCTIONS TO ADD TO ANDROID STUDIO
+
+- Click on the green code button at the top right 
+- Copy the link
+- Go to android studio's file page and click "Get from Version Control"
+- Paste the link and once it loads, you're connected! 
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the Ultimate Goal (2020-2021) competition season.
