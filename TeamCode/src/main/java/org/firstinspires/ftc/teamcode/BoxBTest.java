@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.view.View;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,12 +17,16 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 // import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.*;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
-@Autonomous(name = "BoxBAuto", group = "Sensor")
+@Autonomous(name = "GyroBoxBTest", group = "Sensor")
 
-public class AutoBoxB extends LinearOpMode {
+public class BoxBTest extends LinearOpMode {
     ColorSensor color;
     boolean check = false;
     DcMotor TopRight;
@@ -34,20 +38,24 @@ public class AutoBoxB extends LinearOpMode {
     Servo ShooterServo;
     Servo LinearSlidesServo;
     Servo ClawServo;
+    BNO055IMU imu;
+    Orientation angles;
     int counter = 0;
     //Amp Stuff
     ExpansionHubMotor IntakeAmp;
     ExpansionHubEx expansionHub;
 
-
     public void runOpMode() throws InterruptedException{
         //Amp Stuff
-        expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
-        IntakeAmp = (ExpansionHubMotor) hardwareMap.dcMotor.get("intakeMotor");
 
+        //expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        //IntakeAmp = (ExpansionHubMotor) hardwareMap.dcMotor.get("intakeMotor");
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         color = hardwareMap.get(ColorSensor.class,"color");
-
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
         TopLeft = hardwareMap.dcMotor.get("topLeft");
         TopRight = hardwareMap.dcMotor.get("topRight");
         BottomLeft = hardwareMap.dcMotor.get("bottomLeft");
@@ -75,7 +83,6 @@ public class AutoBoxB extends LinearOpMode {
         // BottomRight.setPower(.32);
         // BottomLeft.setPower(.32);
         // sleep(300);
-
         // TopRight.setPower(0);
         // TopLeft.setPower(0);
         // BottomRight.setPower(0);
@@ -381,6 +388,58 @@ public class AutoBoxB extends LinearOpMode {
         sleep(1000);
 
 
+
+    }
+
+    public void moveForward(int time, double power){
+        TopRight.setPower(power);
+        TopLeft.setPower(power);
+        BottomLeft.setPower(power);
+        BottomRight.setPower(power);
+        sleep(time);
+    }
+
+    public void moveBack(int time, double power){
+        TopRight.setPower(-power);
+        TopLeft.setPower(-power);
+        BottomLeft.setPower(-power);
+        BottomRight.setPower(-power);
+        sleep(time);
+    }
+
+    public void strafeRight(int time, double power){
+        TopRight.setPower(power);
+        TopLeft.setPower(power);
+        BottomLeft.setPower(-power);
+        BottomRight.setPower(-power);
+        sleep(time);
+    }
+
+    public void strafeLeft(int time, double power){
+        TopRight.setPower(-power);
+        TopLeft.setPower(-power);
+        BottomLeft.setPower(power);
+        BottomRight.setPower(power);
+        sleep(time);
+    }
+
+    public void turn(int degrees){
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        while(angles.firstAngle != degrees) {
+            if (angles.firstAngle > degrees) {
+                TopLeft.setPower(.5);
+                TopRight.setPower(-.5);
+                BottomLeft.setPower(.5);
+                BottomRight.setPower(-0.5);
+                sleep(1);
+            } else if (angles.firstAngle < degrees) {
+                TopLeft.setPower(-.5);
+                TopRight.setPower(.5);
+                BottomLeft.setPower(-.5);
+                BottomRight.setPower(0.5);
+                sleep(1);
+            }
+        }
 
     }
 }
