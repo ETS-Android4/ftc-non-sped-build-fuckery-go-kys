@@ -1,24 +1,33 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Shooter Velocity Test", group ="Test")
-public class ShooterVelocityTest extends LinearOpMode {
-    DcMotorEx Shooter;
-    DcMotorEx Intake;
-    Servo ShooterServo;
+@TeleOp(name="Shooter Velocity Test", group ="Test")
+public class ShooterVelocityTest extends OpMode {
 
-    int ShooterRPM = 1000;
-    int IntakeRPM = 800;
+    @Override
+    public void init() {
+
+    }
+
 
 
 
     @Override
-    public void runOpMode() {
+    public void loop() {
+        DcMotorEx Shooter;
+        DcMotorEx Intake;
+        Servo ShooterServo;
+
+        int ShooterRPM = 1000;
+        int IntakeRPM = 800;
+
         Shooter = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         Intake = hardwareMap.get(DcMotorEx.class, "intakeMotor");
 
@@ -34,10 +43,7 @@ public class ShooterVelocityTest extends LinearOpMode {
 
 
         Shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        waitForStart();
-
-        while (opModeIsActive()) {
+        Intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             if (A) {
                 ShooterRPM += 100;
@@ -58,9 +64,13 @@ public class ShooterVelocityTest extends LinearOpMode {
             }
             if (LT != 0) {
                 Shooter.setVelocity(28 * ShooterRPM);
+            } else {
+                Shooter.setVelocity(0);
             }
             if (RT != 0) {
                 Intake.setVelocity(28 * (IntakeRPM * RT));
+            } else {
+                Intake.setVelocity(0);
             }
 
             telemetry.addLine("A to increase Shooter RPM, B to decrease Shooter RPM, X to increase Intake RPM, Y to decrease Intake RPM,");
@@ -74,7 +84,6 @@ public class ShooterVelocityTest extends LinearOpMode {
             telemetry.addData("is at target", !Intake.isBusy());
             telemetry.update();
 
-        }
 
 
     }
