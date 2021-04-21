@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Shooter Velocity Test", group ="Test Code")
+@Autonomous(name="Shooter Velocity Test", group ="Test")
 public class ShooterVelocityTest extends LinearOpMode {
     DcMotorEx Shooter;
     DcMotorEx Intake;

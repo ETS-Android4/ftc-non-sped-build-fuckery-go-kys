@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-@Autonomous(name="Drive Avoid Imu", group="Test Code")
+@Autonomous(name="GyroAutoTest", group="Test Code")
 //@Disabled
 public class GyroAutoTest extends LinearOpMode
 {
