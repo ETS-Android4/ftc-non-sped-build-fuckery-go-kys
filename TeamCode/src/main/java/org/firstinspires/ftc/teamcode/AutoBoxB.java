@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.view.View;
+//import android.view.View;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-
+import java.lang.*;
 // import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 // import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 // import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,6 +18,10 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 // import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.*;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
@@ -24,8 +29,10 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 
 public class AutoBoxB extends LinearOpMode {
     ColorSensor color;
+    BNO055IMU imu;
     boolean check = false;
     DcMotor TopRight;
+    Orientation angles;
     DcMotor TopLeft;
     DcMotor BottomRight;
     DcMotor BottomLeft;
@@ -39,7 +46,32 @@ public class AutoBoxB extends LinearOpMode {
     ExpansionHubMotor IntakeAmp;
     ExpansionHubEx expansionHub;
 
-
+    public void turn(double turnAngle, double timeoutS){
+        sleep(250);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double speed = 0.5;
+        double oldDegreesLeft = turnAngle;
+        double scaledSpeed = speed;
+        double targetHeading = angles.firstAngle + turnAngle;
+        double oldAngle = angles.firstAngle;
+        if(targetHeading < -180){targetHeading += 360;}
+        if(targetHeading >180){targetHeading -= 360;}
+        double degreesLeft = ((Math.signum(angles.firstAngle - targetHeading) + 1)/2) * (360 - Math.abs(angles.firstAngle - targetHeading)) + (Math.signum(targetHeading - angles.firstAngle) + 1) / 2 * Math.abs(angles.firstAngle - targetHeading);
+        resetStartTime();
+        while(opModeIsActive() && time < timeoutS && degreesLeft > 1 && oldDegreesLeft - degreesLeft >= 0){
+            scaledSpeed = degreesLeft/(100 + degreesLeft) * speed;
+            if(scaledSpeed > 1){scaledSpeed = .1;}
+            TopLeft.setPower(scaledSpeed);
+            TopRight.setPower(-scaledSpeed);
+            BottomLeft.setPower(scaledSpeed);
+            BottomRight.setPower(-scaledSpeed);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            oldDegreesLeft = degreesLeft;
+            degreesLeft = ((Math.signum(angles.firstAngle - targetHeading) + 1)/2) * (360 - Math.abs(angles.firstAngle - targetHeading)) + (Math.signum(targetHeading - angles.firstAngle) + 1) / 2 * Math.abs(angles.firstAngle - targetHeading);
+            if(Math.abs(angles.firstAngle - oldAngle)<1){speed *= 1.1;}
+            oldAngle = angles.firstAngle;
+        }
+    }
     public void runOpMode() throws InterruptedException{
         //Amp Stuff
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
