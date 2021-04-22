@@ -90,20 +90,12 @@ public class BoxBTest extends LinearOpMode {
         // sleep(200);
         while(counter!= 1){
             if(color.blue() >= 2000){
-                TopRight.setPower(0);
-                TopLeft.setPower(0);
-                BottomRight.setPower(0);
-                BottomLeft.setPower(0);
-                sleep(50);
+                stop(50);
                 check = true;
                 counter++;
             }
             else{
-                TopLeft.setPower(.6);
-                TopRight.setPower(.6);
-                BottomLeft.setPower(.6);
-                BottomRight.setPower(.6);
-                sleep(1);
+                moveForward(1, 0.6);
             }
             telemetry.addData("boolean check: ",check);
 
@@ -112,11 +104,7 @@ public class BoxBTest extends LinearOpMode {
         telemetry.addData("counter:",counter);
         telemetry.update();
 
-        TopRight.setPower(0);
-        TopLeft.setPower(0);
-        BottomRight.setPower(0);
-        BottomLeft.setPower(0);
-        sleep(500);
+        stop(500);
 
         TopRight.setPower(.10);
         TopLeft.setPower(.10);
@@ -124,37 +112,16 @@ public class BoxBTest extends LinearOpMode {
         BottomLeft.setPower(.10);
         //ClawServo.setPosition(.5);
 
-        TopRight.setPower(0);
-        TopLeft.setPower(0);
-        BottomRight.setPower(0);
-        BottomLeft.setPower(0);
-        sleep(500);
+        stop(500);
 
-        TopLeft.setPower(0.8);
-        TopRight.setPower(0.8);
-        BottomRight.setPower(-0.8);
-        BottomLeft.setPower(-0.8);
-        sleep(400);
+        strafeLeft(400, 0.8);
 
-
-        TopLeft.setPower(0);
-        TopRight.setPower(0);
-        BottomRight.setPower(0);
-        BottomLeft.setPower(0);
-        sleep(1000);
+        stop(1000);
         counter = 0;
 
-        TopLeft.setPower(-.5);
-        TopRight.setPower(-.5);
-        BottomLeft.setPower(-.5);
-        BottomRight.setPower(-.5);
-        sleep(70);
+        moveBack(70, 0.5);
 
-        TopLeft.setPower(0);
-        TopRight.setPower(0);
-        BottomRight.setPower(0);
-        BottomLeft.setPower(0);
-        sleep(300);
+        stop(300);
 
         ClawServo.setPosition(.5);
         sleep(250);
@@ -165,17 +132,9 @@ public class BoxBTest extends LinearOpMode {
 //        BottomLeft.setPower(0);
 //        sleep(500);
 
-        TopLeft.setPower(-.5);
-        TopRight.setPower(-.5);
-        BottomLeft.setPower(-.5);
-        BottomRight.setPower(-.5);
-        sleep(600);
+        moveBack(600, 0.5);
 
-        TopLeft.setPower(0);
-        TopRight.setPower(0);
-        BottomRight.setPower(0);
-        BottomLeft.setPower(0);
-        sleep(1000);
+        stop(1000);
 
         TopRight.setPower(-20);
         TopLeft.setPower(20);
@@ -183,11 +142,7 @@ public class BoxBTest extends LinearOpMode {
         BottomRight.setPower(-20);
         sleep(350);
 
-        TopLeft.setPower(0);
-        TopRight.setPower(0);
-        BottomRight.setPower(0);
-        BottomLeft.setPower(0);
-        sleep(500);
+        stop(500);
 
         Shooter.setPower(100);
         sleep(1500);
@@ -407,7 +362,7 @@ public class BoxBTest extends LinearOpMode {
         sleep(time);
     }
 
-    public void strafeRight(int time, double power){
+    public void strafeLeft(int time, double power){
         TopRight.setPower(power);
         TopLeft.setPower(power);
         BottomLeft.setPower(-power);
@@ -415,7 +370,7 @@ public class BoxBTest extends LinearOpMode {
         sleep(time);
     }
 
-    public void strafeLeft(int time, double power){
+    public void strafeRight(int time, double power){
         TopRight.setPower(-power);
         TopLeft.setPower(-power);
         BottomLeft.setPower(power);

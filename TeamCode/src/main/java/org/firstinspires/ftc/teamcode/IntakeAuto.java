@@ -101,14 +101,19 @@ public class IntakeAuto extends LinearOpMode {
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
-                        if (recognition.getLabel() == "Single") {
-                            break;
+                        while (recognition.getLabel() == "Single") {
+                            strafeLeft(1, 0.3);
+                            if (recognition.getLabel() == "Single") {
+                                break;
+                            }
                         }
 
                     }
 
                 }
             }
+
+            stop(500);
 
             tfod.shutdown();
 
@@ -123,42 +128,35 @@ public class IntakeAuto extends LinearOpMode {
 
                 //Moves Backwards until amperage if intake motor goes high, meaning that a ring has gotten in the intake
                 while (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 6) {
-                    TopLeft.setPower(-0.3);
-                    TopRight.setPower(-0.3);
-                    BottomRight.setPower(-0.3);
-                    BottomLeft.setPower(-0.3);
+                    moveBack(1, 0.3);
 
                     telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
                     telemetry.update();
                 }
 
-                telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-                telemetry.update();
 
-                TopLeft.setPower(0);
-                TopRight.setPower(0);
-                BottomRight.setPower(0); //stop
-                BottomLeft.setPower(0);
-                sleep(1000);
+                stop(1000);
 
                 if (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 2) {
+
                     continue;
+
                 } else {
                     while (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 5) {
-                        TopLeft.setPower(0);
-                        TopRight.setPower(0);
-                        BottomRight.setPower(0);
-                        BottomLeft.setPower(0);
+
+                        stop(1000);
+
+                        telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
+                        telemetry.update();
+
                         if (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 3) {
+
                             continue;
                         }
                     }
                 }
 
                 Intake.setPower(0);
-
-                telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-                telemetry.update();
 
             }
 
@@ -168,27 +166,14 @@ public class IntakeAuto extends LinearOpMode {
             int counter = 0;
             while (counter != 1) {
                 if (color.blue() >= 2000) {
-                    TopLeft.setPower(0);
-                    TopRight.setPower(0);
-                    BottomRight.setPower(0);
-                    BottomLeft.setPower(0);
-                    sleep(100);
+                    stop(100);
                     counter++;
                 } else {
-                    TopLeft.setPower(0.3);
-                    TopRight.setPower(0.3);
-                    BottomRight.setPower(0.3);
-                    BottomLeft.setPower(0.3);
-                    sleep(1);
+                    moveForward(1, 0.3);
                 }
-                ;
             }
 
-            TopLeft.setPower(0);
-            TopRight.setPower(0);
-            BottomRight.setPower(0); //stop
-            BottomLeft.setPower(0);
-            sleep(500);
+            stop(500);
 
             TopLeft.setPower(-0.8);
             TopRight.setPower(0.8);
@@ -196,23 +181,11 @@ public class IntakeAuto extends LinearOpMode {
             BottomLeft.setPower(-0.8);    // rotate right
             sleep(50);
 
-            TopLeft.setPower(0);
-            TopRight.setPower(0);
-            BottomRight.setPower(0); //stop
-            BottomLeft.setPower(0);
-            sleep(500);
+            stop(500);
 
-            TopLeft.setPower(-0.4);
-            TopRight.setPower(-0.4);
-            BottomRight.setPower(-0.4);
-            BottomLeft.setPower(-0.4);    // rotate right
-            sleep(160);
+            moveBack(160, 0.4);
 
-            TopLeft.setPower(0);
-            TopRight.setPower(0);
-            BottomRight.setPower(0); //stop
-            BottomLeft.setPower(0);
-            sleep(500);
+            stop(500);
 
             Shooter.setPower(100);
             sleep(2000);
@@ -225,33 +198,17 @@ public class IntakeAuto extends LinearOpMode {
             counter = 0;
             while (counter != 1) {
                 if (color.blue() >= 2000) {
-                    TopLeft.setPower(0);
-                    TopRight.setPower(0);
-                    BottomRight.setPower(0);
-                    BottomLeft.setPower(0);
-                    sleep(100);
+                    stop(100);
                     counter++;
                 } else {
-                    TopLeft.setPower(-0.3);
-                    TopRight.setPower(-0.3);
-                    BottomRight.setPower(-0.3);
-                    BottomLeft.setPower(-0.3);
-                    sleep(1);
+                    moveBack(1, 0.3);
                 }
                 ;
             }
 
-            TopLeft.setPower(0.3);
-            TopRight.setPower(0.3);
-            BottomRight.setPower(0.3);
-            BottomLeft.setPower(0.3);
-            sleep(100);
+            moveForward(100, 0.3);
 
-            TopLeft.setPower(0);
-            TopRight.setPower(0);
-            BottomRight.setPower(0); //stop
-            BottomLeft.setPower(0);
-            sleep(1000);
+            stop(1000);
 
 
         }
@@ -279,5 +236,45 @@ public class IntakeAuto extends LinearOpMode {
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
+
+    public void moveForward(int time, double power){
+        TopRight.setPower(power);
+        TopLeft.setPower(power);
+        BottomLeft.setPower(power);
+        BottomRight.setPower(power);
+        sleep(time);
+    }
+
+    public void moveBack(int time, double power){
+        TopRight.setPower(-power);
+        TopLeft.setPower(-power);
+        BottomLeft.setPower(-power);
+        BottomRight.setPower(-power);
+        sleep(time);
+    }
+
+    public void strafeLeft(int time, double power){
+        TopRight.setPower(power);
+        TopLeft.setPower(power);
+        BottomLeft.setPower(-power);
+        BottomRight.setPower(-power);
+        sleep(time);
+    }
+
+    public void strafeRight(int time, double power){
+        TopRight.setPower(-power);
+        TopLeft.setPower(-power);
+        BottomLeft.setPower(power);
+        BottomRight.setPower(power);
+        sleep(time);
+    }
+
+    public void stop(int time){
+        TopRight.setPower(0);
+        TopLeft.setPower(0);
+        BottomLeft.setPower(0);
+        BottomRight.setPower(0);
+        sleep(time);
     }
 }
