@@ -84,7 +84,8 @@ public class IntakeAuto extends LinearOpMode {
 
         if (tfod != null) {
             tfod.activate();
-            tfod.setZoom(2.5, 16.0/9.0);
+            telemetry.addLine("Init");
+            telemetry.update();
         }
 
         waitForStart();
@@ -92,7 +93,11 @@ public class IntakeAuto extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            if (tfod != null) {
+            strafeRight(1, 0.25);
+
+            boolean detect = false;
+
+            while (detect == false && opModeIsActive()) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
@@ -101,11 +106,12 @@ public class IntakeAuto extends LinearOpMode {
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
-                        while (recognition.getLabel() == "Single") {
-                            strafeLeft(1, 0.3);
-                            if (recognition.getLabel() == "Single") {
-                                break;
-                            }
+                        if (recognition.getLabel() == "Single") {
+                            if (recognition.getLeft() < 260 && recognition.getRight() < 460) {
+
+                                detect = true;
+                           }
+
                         }
 
                     }
@@ -127,34 +133,24 @@ public class IntakeAuto extends LinearOpMode {
                 telemetry.update();
 
                 //Moves Backwards until amperage if intake motor goes high, meaning that a ring has gotten in the intake
-                while (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 6) {
+                while (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 6 && opModeIsActive()) {
                     moveBack(1, 0.3);
 
                     telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
                     telemetry.update();
+
+
                 }
 
+                while (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) > 3 && opModeIsActive()) {
 
-                stop(1000);
+                    stop(1000);
 
-                if (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 2) {
+                    telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
+                    telemetry.update();
 
-                    continue;
-
-                } else {
-                    while (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 5) {
-
-                        stop(1000);
-
-                        telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-                        telemetry.update();
-
-                        if (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 3) {
-
-                            continue;
-                        }
-                    }
                 }
+
 
                 Intake.setPower(0);
 

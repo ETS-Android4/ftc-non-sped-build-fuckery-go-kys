@@ -24,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
-@Autonomous(name = "BoxBTest", group = "Sensor")
+@Autonomous(name = "GyroAuto", group = "Sensor")
 public class GyroAutonomousFunctions extends LinearOpMode {
     ColorSensor color;
     boolean check = false;
@@ -78,7 +78,7 @@ public class GyroAutonomousFunctions extends LinearOpMode {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         color = hardwareMap.get(ColorSensor.class,"color");
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu 1");
         imu.initialize(parameters);
         TopLeft = hardwareMap.dcMotor.get("topLeft");
         TopRight = hardwareMap.dcMotor.get("topRight");

@@ -128,6 +128,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 recognition.getLeft(), recognition.getTop());
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
+                        telemetry.addData(String.format("  Width,height (%d)", i), "%.03f , %.03f",
+                                  recognition.getImageWidth(), recognition.getImageHeight());
                       }
                       telemetry.update();
                     }

@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-@Autonomous(name="GyroAutoTest", group="Test Code")
+@Autonomous(name="Test Turning", group="Test Code")
 //@Disabled
 public class GyroAutoTest extends LinearOpMode
 {
@@ -52,15 +52,15 @@ public class GyroAutoTest extends LinearOpMode
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled      = false;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu 1");
 
         imu.initialize(parameters);
 
@@ -128,10 +128,10 @@ public class GyroAutoTest extends LinearOpMode
                 BottomRight.setPower(0);
 
                 // turn 90 degrees right.
-                if (aButton) rotate(-90, power);
+                if (aButton) rotate(-45, power);
 
                 // turn 90 degrees left.
-                if (bButton) rotate(90, power);
+                if (bButton) rotate(45, power);
             }
         }
 

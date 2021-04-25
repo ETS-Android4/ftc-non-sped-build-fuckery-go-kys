@@ -68,7 +68,7 @@ public class ShooterVelocityTest extends OpMode {
                 Shooter.setVelocity(0);
             }
             if (RT != 0) {
-                Intake.setVelocity(28 * (IntakeRPM * RT));
+                Intake.setVelocity(28 * IntakeRPM);
             } else {
                 Intake.setVelocity(0);
             }
