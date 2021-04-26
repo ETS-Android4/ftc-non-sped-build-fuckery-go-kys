@@ -93,7 +93,7 @@ public class IntakeAuto extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            strafeRight(1, 0.25);
+            strafeRight(1, 0.28);
 
             boolean detect = false;
 
@@ -107,7 +107,7 @@ public class IntakeAuto extends LinearOpMode {
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel() == "Single") {
-                            if (recognition.getLeft() < 260 && recognition.getRight() < 460) {
+                            if (recognition.getLeft() < 50 && recognition.getRight() < 380) {
 
                                 detect = true;
                            }
@@ -171,22 +171,22 @@ public class IntakeAuto extends LinearOpMode {
 
             stop(500);
 
-            TopLeft.setPower(-0.8);
-            TopRight.setPower(0.8);
-            BottomRight.setPower(0.8);
-            BottomLeft.setPower(-0.8);    // rotate right
-            sleep(50);
+            TopLeft.setPower(0.6);
+            TopRight.setPower(0.6);
+            BottomRight.setPower(-0.6);
+            BottomLeft.setPower(-0.6);    // rotate right
+            sleep(250);
 
             stop(500);
 
-            moveBack(160, 0.4);
+            moveBack(300, 0.4);
 
             stop(500);
 
             Shooter.setPower(100);
             sleep(2000);
             ShooterServo.setPosition(0);
-            sleep(500);
+            sleep(1500);
             ShooterServo.setPosition(.3);
             sleep(1000);
             //.2 is base. 0 is shooter position.
@@ -197,7 +197,7 @@ public class IntakeAuto extends LinearOpMode {
                     stop(100);
                     counter++;
                 } else {
-                    moveBack(1, 0.3);
+                    moveForward(1, 0.3);
                 }
                 ;
             }

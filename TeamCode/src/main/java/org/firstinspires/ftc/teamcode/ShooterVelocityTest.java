@@ -11,6 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @TeleOp(name="Shooter Velocity Test", group ="Test")
 public class ShooterVelocityTest extends OpMode {
 
+    int ShooterRPM = 1000;
+    int IntakeRPM = 800;
+
     @Override
     public void init() {
 
@@ -25,13 +28,10 @@ public class ShooterVelocityTest extends OpMode {
         DcMotorEx Intake;
         Servo ShooterServo;
 
-        int ShooterRPM = 1000;
-        int IntakeRPM = 800;
-
         Shooter = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         Intake = hardwareMap.get(DcMotorEx.class, "intakeMotor");
 
-        ShooterServo = hardwareMap.get(Servo.class, "shooterServo");
+        ShooterServo = hardwareMap.get(Servo.class, "test");
 
         boolean A = gamepad1.a;
         boolean B = gamepad1.b;

@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -32,7 +33,7 @@ public class HardwareRobotDriverControlled
     public DcMotor BottomRight = null;
     public DcMotor IntakeMotor = null;
     public DcMotor LinearSlides = null;
-    public DcMotor ShooterMotor = null;
+    public DcMotorEx ShooterMotor = null;
     public Servo ShooterServo = null;
     public Servo ClawServo = null;
     public Servo LinearSlidesServo = null;
@@ -58,7 +59,7 @@ public class HardwareRobotDriverControlled
         ShooterServo = hwMapRobot.servo.get("test");
         IntakeMotor = hwMapRobot.dcMotor.get("intakeMotor");
         ClawServo = hwMapRobot.servo.get("test2");
-        ShooterMotor = hwMapRobot.dcMotor.get("shooterMotor");
+        ShooterMotor = hwMapRobot.get(DcMotorEx.class, "shooterMotor");
         LinearSlides = hwMapRobot.dcMotor.get("linearSlideMotor");
         LinearSlidesServo = hwMapRobot.servo.get("linearSlideServo");
 

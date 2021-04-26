@@ -119,6 +119,12 @@ public class driverControlledTest extends OpMode{
         if (A == true) {
             robot.LinearSlidesServo.setPosition(0.4);
         }
+
+        if (RB) {
+            robot.ShooterMotor.setVelocity(28 * 5100);
+        } else {
+            robot.ShooterMotor.setVelocity(0);
+        }
     }
 }
 
