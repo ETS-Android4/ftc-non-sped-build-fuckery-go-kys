@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -33,9 +34,9 @@ import com.qualcomm.*;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
-@Autonomous(name = "BoxBFinal", group = "Sensor")
+@Autonomous(name = "FINAL AUTO", group = "Sensor")
 
-public class BoxBTest extends LinearOpMode {
+public class AutonomousBoxB extends LinearOpMode {
     ColorSensor color;
     boolean check = false;
     DcMotor TopRight;
@@ -45,7 +46,7 @@ public class BoxBTest extends LinearOpMode {
     DcMotor BottomRight;
     DcMotor BottomLeft;
     DcMotor Intake;
-    DcMotor Shooter;
+    DcMotorEx Shooter;
     Servo ShooterServo;
     Servo LinearSlidesServo;
     Servo ClawServo;
@@ -57,6 +58,18 @@ public class BoxBTest extends LinearOpMode {
     //Amp Stuff
     ExpansionHubMotor IntakeAmp;
     ExpansionHubEx expansionHub;
+
+    //Vuforia
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
+
+    private static final String VUFORIA_KEY =
+            "Abwb1Df/////AAABmRO3q8AgDUqAhwU7QR+WS7dI6p3hpQCsmemiXe+oibUizjMS3TkVaTXrjCueHyGFClD4pL6klURnCuJiEM3peaceY+uEbqjkuUqqZljr6Pe1XYIl51L+jwztIkLFpwo/5wc6dxDEe0aY4guq/uHID/fghh+kKqxTy58leUOcQaBx9XjAP7aTM8XHjIBtFHwNw28UBFnGFi6VD15Ybi5l14xu/XDemJduUIGPOpCSGQVbgdARN3MohoZSU1Xr6zBmEdrXLY9TXmF/irNTcHh80Q27u1XgdEZF61zE0EH3yDOsCCWHiL0sEZvXIU1Sx6bbmeyQffNynOPKsZ5reb6NcPEMZvPqYZCq3RAwoZBpTbF/";
+
+    private VuforiaLocalizer vuforia;
+
+    private TFObjectDetector tfod;
 
 
 
@@ -75,9 +88,20 @@ public class BoxBTest extends LinearOpMode {
         telemetry.addData("Mode", "calibrating...");
         telemetry.update();
 
+        //Make sure Vuforia is initialized
+        initVuforia();
+        initTfod();
+
+
+
         // make sure the imu gyro is calibrated before continuing.
-        while (!isStopRequested() && !imu.isGyroCalibrated())
+        while (!isStopRequested() && !imu.isGyroCalibrated() && tfod != null)
         {
+            if (tfod != null) {
+                tfod.activate();
+                telemetry.addLine("Vuforia Init");
+                telemetry.update();
+            }
             sleep(50);
             idle();
         }
@@ -94,7 +118,7 @@ public class BoxBTest extends LinearOpMode {
 
         ShooterServo = hardwareMap.servo.get("test");
         ClawServo = hardwareMap.servo.get("test2");
-        Shooter = hardwareMap.dcMotor.get("shooterMotor");
+        Shooter = hardwareMap.get(DcMotorEx.class, "shooterMotor");
         LinearSlidesServo = hardwareMap.servo.get("linearSlideServo");
 
         TopLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -105,8 +129,7 @@ public class BoxBTest extends LinearOpMode {
         ClawServo.setPosition(0);
         LinearSlidesServo.setPosition(0.9);
         ShooterServo.setPosition(.2);
-        float gain = 12;
-        //color.setGain(gain);
+
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("Z angle", angles.firstAngle);
         telemetry.addData("Y Angle", angles.secondAngle);
@@ -115,13 +138,14 @@ public class BoxBTest extends LinearOpMode {
 
         waitForStart();
 
+        //Move to Box B, Drop Wobble, Shoot
         toLineForward();
 
         stopRobot(500);
 
-        LinearSlidesServo.setPosition(.4);
-
-        sleep(1000);
+//        LinearSlidesServo.setPosition(.4);
+//
+//        sleep(1000);
 
         ClawServo.setPosition(.5);
 
@@ -130,6 +154,8 @@ public class BoxBTest extends LinearOpMode {
         moveBack(580, 0.5);
 
         stopRobot(400);
+
+        Shooter.setPower(1);
 
         strafeLeft(550, 0.3);
         stopRobot(400);
@@ -142,6 +168,9 @@ public class BoxBTest extends LinearOpMode {
         shootRings();
         shootRings();
 
+        Shooter.setPower(0);
+
+        //Reset to straight for Vuforia
         turn(1, 0.1);
 
         TopLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -152,11 +181,131 @@ public class BoxBTest extends LinearOpMode {
         ClawServo.setPosition(0);
         ShooterServo.setPosition(.2);
 
+        //Intake
+
+        while(opModeIsActive()) {
+
+            strafeRight(1, 0.28);
+
+            boolean detect = false;
+
+            while (detect == false && opModeIsActive()) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        if (recognition.getLabel() == "Single") {
+                            if (recognition.getLeft() < 50 && recognition.getRight() < 380) {
+
+                                detect = true;
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+
+            stopRobot(500);
+
+            tfod.shutdown();
+
+            Intake.setPower(1);
+
+            for (int i = 1; i <= 1; i++) {
+
+                Intake.setPower(1);
+
+                telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
+                telemetry.update();
+
+                //Moves Backwards until amperage if intake motor goes high, meaning that a ring has gotten in the intake
+                while (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) < 6 && opModeIsActive()) {
+                    moveBack(1, 0.3);
+
+                    telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
+                    telemetry.update();
+
+
+                }
+
+                while (IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) > 3 && opModeIsActive()) {
+
+                    stopRobot(1000);
+
+                    telemetry.addData("Intake current", IntakeAmp.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
+                    telemetry.update();
+
+                }
+
+
+                Intake.setPower(0);
+
+            }
+
+            Intake.setPower(0);
+
+            //Using color sensor to align with white line
+            int counter = 0;
+            while (counter != 1) {
+                if (color.blue() >= 2000) {
+                    stopRobot(100);
+                    counter++;
+                } else {
+                    moveForward(1, 0.3);
+                }
+            }
+
+            stopRobot(500);
+
+            Shooter.setVelocity(28 * 5100);
+
+            strafeRight(250, 0.6);
+
+            stopRobot(500);
+
+            moveBack(300, 0.4);
+
+            stopRobot(500);
+
+            Shooter.setVelocity(28 * 5100);
+            sleep(500);
+            ShooterServo.setPosition(0);
+            sleep(500);
+            ShooterServo.setPosition(.3);
+            sleep(500);
+            //.2 is base. 0 is shooter position.
+
+            counter = 0;
+            while (counter != 1) {
+                if (color.blue() >= 2000) {
+                    stopRobot(100);
+                    counter++;
+                } else {
+                    moveForward(1, 0.3);
+                }
+                ;
+            }
+
+            moveForward(100, 0.3);
+
+            stopRobot(100);
+
+        }
 
 
 
 
     }
+
+    /**
+        These are all the functions
+     */
 
     private void resetAngle()
     {
@@ -337,10 +486,34 @@ public class BoxBTest extends LinearOpMode {
     }
     public void shootRings(){
         Shooter.setPower(1);
-        sleep(1500);
+        sleep(500);
         ShooterServo.setPosition(0);
         sleep(250);
         ShooterServo.setPosition(0.2);
         sleep(250);
+    }
+
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }
