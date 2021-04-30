@@ -107,7 +107,7 @@ public class IntakeAuto extends LinearOpMode {
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel() == "Single") {
-                            if (recognition.getLeft() < 50 && recognition.getRight() < 380) {
+                            if (recognition.getLeft() < 80) {
 
                                 detect = true;
                            }

@@ -46,7 +46,7 @@ public class AutonomousBoxB extends LinearOpMode {
     DcMotor BottomRight;
     DcMotor BottomLeft;
     DcMotor Intake;
-    DcMotorEx Shooter;
+    DcMotor Shooter;
     Servo ShooterServo;
     Servo LinearSlidesServo;
     Servo ClawServo;
@@ -139,7 +139,7 @@ public class AutonomousBoxB extends LinearOpMode {
         waitForStart();
 
         //Move to Box B, Drop Wobble, Shoot
-        toLineForward();
+        toLineForward(0.55);
 
         stopRobot(500);
 
@@ -147,20 +147,20 @@ public class AutonomousBoxB extends LinearOpMode {
 //
 //        sleep(1000);
 
+        moveBack(150, 0.5);
+
         ClawServo.setPosition(.5);
 
-        sleep(500);
-
-        moveBack(580, 0.5);
-
-        stopRobot(400);
+        moveBack(600, 0.5);
 
         Shooter.setPower(1);
 
-        strafeLeft(550, 0.3);
         stopRobot(400);
 
-        turn(125, 0.8);
+        strafeLeft(730, 0.3);
+        stopRobot(400);
+
+        turn(150, 0.8);
 
         stopRobot(500);
 
@@ -171,7 +171,7 @@ public class AutonomousBoxB extends LinearOpMode {
         Shooter.setPower(0);
 
         //Reset to straight for Vuforia
-        turn(1, 0.1);
+        turn(-1, 0.2);
 
         TopLeft.setDirection(DcMotor.Direction.FORWARD);
         TopRight.setDirection(DcMotor.Direction.REVERSE);
@@ -185,7 +185,7 @@ public class AutonomousBoxB extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            strafeRight(1, 0.28);
+            strafeLeft(1, 0.28);
 
             boolean detect = false;
 
@@ -199,7 +199,7 @@ public class AutonomousBoxB extends LinearOpMode {
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel() == "Single") {
-                            if (recognition.getLeft() < 50 && recognition.getRight() < 380) {
+                            if (recognition.getLeft() < 90) {
 
                                 detect = true;
                             }
@@ -263,7 +263,7 @@ public class AutonomousBoxB extends LinearOpMode {
 
             stopRobot(500);
 
-            Shooter.setVelocity(28 * 5100);
+            Shooter.setPower(1);
 
             strafeRight(250, 0.6);
 
@@ -273,7 +273,7 @@ public class AutonomousBoxB extends LinearOpMode {
 
             stopRobot(500);
 
-            Shooter.setVelocity(28 * 5100);
+            Shooter.setPower(1);
             sleep(500);
             ShooterServo.setPosition(0);
             sleep(500);
@@ -422,7 +422,7 @@ public class AutonomousBoxB extends LinearOpMode {
         // reset angle tracking on new heading.
         resetAngle();
     }
-    public void toLineForward(){
+    public void toLineForward(double power){
         while(counter!= 1){
             if(color.blue() >= 1500){
                 TopRight.setPower(0);
@@ -434,15 +434,21 @@ public class AutonomousBoxB extends LinearOpMode {
                 counter++;
             }
             else{
-                TopLeft.setPower(.45);
-                TopRight.setPower(.45);
-                BottomLeft.setPower(.45);
-                BottomRight.setPower(.45);
+                TopLeft.setPower(power);
+                TopRight.setPower(power);
+                BottomLeft.setPower(power);
+                BottomRight.setPower(power);
                 sleep(1);
             }
             //telemetry.addData("boolean check: ",check);
 
         }
+        TopRight.setPower(0);
+        TopLeft.setPower(0);
+        BottomRight.setPower(0);
+        BottomLeft.setPower(0);
+        sleep(100);
+
     }
 
     public void moveForward(int time, double power){
@@ -486,7 +492,7 @@ public class AutonomousBoxB extends LinearOpMode {
     }
     public void shootRings(){
         Shooter.setPower(1);
-        sleep(500);
+        sleep(800);
         ShooterServo.setPosition(0);
         sleep(250);
         ShooterServo.setPosition(0.2);

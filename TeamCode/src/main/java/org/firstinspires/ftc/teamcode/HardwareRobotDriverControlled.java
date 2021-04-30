@@ -33,7 +33,7 @@ public class HardwareRobotDriverControlled
     public DcMotor BottomRight = null;
     public DcMotor IntakeMotor = null;
     public DcMotor LinearSlides = null;
-    public DcMotorEx ShooterMotor = null;
+    public DcMotor ShooterMotor = null;
     public Servo ShooterServo = null;
     public Servo ClawServo = null;
     public Servo LinearSlidesServo = null;
@@ -59,7 +59,7 @@ public class HardwareRobotDriverControlled
         ShooterServo = hwMapRobot.servo.get("test");
         IntakeMotor = hwMapRobot.dcMotor.get("intakeMotor");
         ClawServo = hwMapRobot.servo.get("test2");
-        ShooterMotor = hwMapRobot.get(DcMotorEx.class, "shooterMotor");
+        ShooterMotor = hwMapRobot.dcMotor.get("shooterMotor");
         LinearSlides = hwMapRobot.dcMotor.get("linearSlideMotor");
         LinearSlidesServo = hwMapRobot.servo.get("linearSlideServo");
 
@@ -89,13 +89,15 @@ public class HardwareRobotDriverControlled
 
 // Set all motors to run with encoders.
 // May want to use RUN_WITHOUT_ENCODERS if encoders aren't installed.
-        TopLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        TopRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BottomLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BottomRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        IntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LinearSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        TopLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        TopRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BottomLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BottomRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        IntakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LinearSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
 
     }
 

@@ -64,9 +64,9 @@ public class driverControlledTest extends OpMode{
         }
         //LT } first shooter motor and then 0.5 servo on
 
-        if (LT > 0)
+        if (LT != 0)
         {
-            robot.ShooterMotor.setPower(100);
+            robot.ShooterMotor.setPower(1);
         } else
         {
             robot.ShooterMotor.setPower(0);
@@ -120,11 +120,13 @@ public class driverControlledTest extends OpMode{
             robot.LinearSlidesServo.setPosition(0.4);
         }
 
-        if (RB) {
-            robot.ShooterMotor.setVelocity(28 * 5100);
-        } else {
-            robot.ShooterMotor.setVelocity(0);
-        }
+//        if (RB) {
+//            robot.ShooterMotor.setVelocity(28 * 5000);
+//        } else {
+//            robot.ShooterMotor.setVelocity(0);
+//        }
+
+        telemetry.addData("Shooter", robot.ShooterMotor.getPower());
     }
 }
 
